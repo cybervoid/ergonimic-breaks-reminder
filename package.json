@@ -1,0 +1,30 @@
+{
+  "name": "ergonimic-breaks-reminder",
+  "version": "1.0.0",
+  "description": "Remember to take ergonomic breaks during the day!",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cybervoid/ergonimic-breaks-reminder.git"
+  },
+  "keywords": [
+    "ergonomic",
+    "breaks",
+    "timer"
+  ],
+  "author": {
+    "name": "Rafael Gil",
+    "email": "rafaelgil83@gmail.com"
+  },
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/cybervoid/ergonimic-breaks-reminder/issues"
+  },
+  "homepage": "https://github.com/cybervoid/ergonimic-breaks-reminder#readme",
+  "devDependencies": {
+    "electron": "^9.0.1"
+  }
+}
