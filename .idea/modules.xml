@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/ergonimic-breaks-reminder.iml" filepath="$PROJECT_DIR$/.idea/ergonimic-breaks-reminder.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/ergonomic-breaks-reminder.iml" filepath="$PROJECT_DIR$/.idea/ergonomic-breaks-reminder.iml" />
     </modules>
   </component>
 </project>
