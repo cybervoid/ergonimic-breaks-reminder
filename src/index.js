@@ -31,7 +31,7 @@ function createMainMenu(){
         // mainMenuTemplate.unshift({})
     }
 
-    const mainMenuTemplate = [
+    let mainMenuTemplate = [
         // { role: 'appMenu' }
         ...(isMac ? [{
             label: app.name,
@@ -133,6 +133,22 @@ function createMainMenu(){
             ]
         }
     ]
+
+    //Add developer tools item if not in prod
+    if(process.env.NODE_ENV !== 'production'){
+        mainMenuTemplate.push({
+            label: "Developer Tool",
+            submenu: [
+                {
+                    label: "Toggle DevTools",
+                    accelerator: isMac ? 'Command+I' : 'Ctrl+I',
+                    click(item, focusedWindow){
+                        focusedWindow.toggleDevTools();
+                    }
+                }
+            ]
+        });
+    }
 
     const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
     Menu.setApplicationMenu(mainMenu);
