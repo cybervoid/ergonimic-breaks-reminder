@@ -4,7 +4,7 @@ const {app, BrowserWindow, Menu, ipcMain} = electron;
 
 let mainWindow, settingsWindow;
 const isMac = process.platform === 'darwin';
-
+process.env.NODE_ENV = 'production';
 
 //listen for app to be ready
 
