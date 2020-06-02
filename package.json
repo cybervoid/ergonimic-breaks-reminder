@@ -6,9 +6,9 @@
   "scripts": {
     "start": "electron .",
     "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=src/assets/img/timer.icns --prune=true --out=release-builds",
-    "build-mac": "electron-installer-dmg ./release-builds/ergonimic-breaks-reminder-darwin-x64/ergonimic-breaks-reminder.app ergonimic-breaks-reminder --out=release-builds --overwrite --icon=src/assets/img/timer.icns",
-    "package-win": "electron-packager . electron-tutorial-app --overwrite --asar=true --platform=win32 --arch=ia32 --icon=assets/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"Electron Tutorial App\"",
-    "package-linux": "electron-packager . electron-tutorial-app --overwrite --asar=true --platform=linux --arch=x64 --icon=assets/icons/png/1024x1024.png --prune=true --out=release-builds"
+    "build-mac": "electron-installer-dmg ./release-builds/ergonimic-breaks-reminder-darwin-x64/ergonimic-breaks-reminder.app ergonimic-breaks-reminder --out=release-builds --overwrite --icon=src/assets/img/icons/timer.icns",
+    "package-win": "electron-packager . ergonimic-breaks-reminder --overwrite --asar=true --platform=win32 --arch=ia32 --icon=src/assets/img/icons/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"Electron Tutorial App\"",
+    "package-linux": "electron-packager . ergonimic-breaks-reminder --overwrite --asar=true --platform=linux --arch=x64 --icon=assets/icons/png/1024x1024.png --prune=true --out=release-builds"
 
   },
   "repository": {
