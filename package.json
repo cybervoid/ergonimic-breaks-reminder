@@ -1,0 +1,37 @@
+{
+  "name": "ergonimic-breaks-reminder",
+  "version": "1.0.0",
+  "description": "Remember to take ergonomic breaks during the day!",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "electron .",
+    "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=src/assets/img/timer.icns --prune=true --out=release-builds",
+    "build-mac": "electron-installer-dmg ./release-builds/ergonimic-breaks-reminder-darwin-x64/ergonimic-breaks-reminder.app ergonimic-breaks-reminder --out=release-builds --overwrite --icon=src/assets/img/icons/timer.icns",
+    "package-win": "electron-packager . ergonimic-breaks-reminder --overwrite --asar=true --platform=win32 --arch=ia32 --icon=src/assets/img/icons/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"Electron Tutorial App\"",
+    "package-linux": "electron-packager . ergonimic-breaks-reminder --overwrite --asar=true --platform=linux --arch=x64 --icon=assets/icons/png/1024x1024.png --prune=true --out=release-builds"
+
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cybervoid/ergonimic-breaks-reminder.git"
+  },
+  "keywords": [
+    "ergonomic",
+    "breaks",
+    "timer"
+  ],
+  "author": {
+    "name": "Rafael Gil",
+    "email": "rafaelgil83@gmail.com"
+  },
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/cybervoid/ergonimic-breaks-reminder/issues"
+  },
+  "homepage": "https://github.com/cybervoid/ergonimic-breaks-reminder#readme",
+  "devDependencies": {
+    "electron": "^9.0.1",
+    "electron-installer-dmg": "^3.0.0",
+    "electron-packager": "^14.2.1"
+  }
+}
