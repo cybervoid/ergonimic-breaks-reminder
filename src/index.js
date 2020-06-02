@@ -1,14 +1,16 @@
 const electron = require('electron');
 
-const {app, BrowserWindow, Menu} = electron;
+const {app, BrowserWindow, Menu, ipcMain} = electron;
 
-let mainWindow;
+let mainWindow, settingsWindow;
+const isMac = process.platform === 'darwin';
+
 
 //listen for app to be ready
 
 function createMainWindow() {
     // Create the browser window.
-    const win = new BrowserWindow({
+    mainWindow = new BrowserWindow({
         width: 800,
         height: 600,
         webPreferences: {
@@ -17,14 +19,13 @@ function createMainWindow() {
     })
 
     // and load the index.html of the app.
-    win.loadFile('src/mainWindow.html');
-    win.on('closed', app.quit);
+    mainWindow.loadFile('src/mainWindow.html');
+    mainWindow.on('closed', app.quit);
     // Open the DevTools.
     // win.webContents.openDevTools()
 }
 
 function createMainMenu(){
-    const isMac = process.platform === 'darwin'
 
     //if MAC, add empty object to menu
     if(process.platform === 'darwin'){
@@ -155,7 +156,7 @@ function createMainMenu(){
 }
 
 function createSettingsWindow(){
-    let settingsWindow = new BrowserWindow({
+    settingsWindow = new BrowserWindow({
         width: 300,
         height: 200,
         webPreferences: {
@@ -170,6 +171,12 @@ function createSettingsWindow(){
         settingsWindow = null;
     })
 }
+
+//catch item:add
+ipcMain.on('item:add', (e, item) => {
+    mainWindow.webContents.send('item:add', item);
+    settingsWindow.close();
+})
 
 app.whenReady().then( () => {
     createMainWindow();
