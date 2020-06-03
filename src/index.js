@@ -2,17 +2,19 @@ const electron = require('electron');
 
 const {app, BrowserWindow, Menu, ipcMain, Tray} = electron;
 
-let mainWindow, settingsWindow, tray;
+let mainWindow, settingsWindow, tray, timer;
 const isMac = process.platform === 'darwin';
-// process.env.NODE_ENV = 'production';
 
-//listen for app to be ready
+// process.env.NODE_ENV = 'production';
 
 function createMainWindow() {
     // Create the browser window.
     mainWindow = new BrowserWindow({
         width: 800,
         height: 600,
+        alwaysOnTop: true,
+        fullscreen: true,
+        modal: true,
         webPreferences: {
             nodeIntegration: true
         }
@@ -189,6 +191,38 @@ function createTray() {
     tray.setContextMenu(contextMenu)
 }
 
+function startTimer() {
+
+    let duration = 1 * 60 * 1000;
+    let countDownDate = new Date(Date.now() + (duration)).getTime();
+    let i = 0;
+
+    timer = setInterval(() => {
+        // Get today's date and time
+        let now = new Date().getTime();
+
+        // Find the distance between now and the count down date
+        let distance = countDownDate - now;
+        i++;
+
+        // Time calculations for days, hours, minutes and seconds
+        // var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        // var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        minutes = ('0' + minutes).slice(-2)
+        seconds = ('0' + seconds).slice(-2);
+
+        if (distance <= 1) {
+            clearInterval(timer);
+            createMainWindow();
+        } else {
+            tray.setTitle(`${minutes}:${seconds}`);
+        }
+    }, 1000)
+}
+
 //catch item:add
 ipcMain.on('item:add', (e, item) => {
     mainWindow.webContents.send('item:add', item);
@@ -197,6 +231,7 @@ ipcMain.on('item:add', (e, item) => {
 
 app.whenReady().then(() => {
     createTray();
+    startTimer();
 });
 
 // Quit when all windows are closed.
