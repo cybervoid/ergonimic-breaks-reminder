@@ -27,13 +27,7 @@ module.exports = class BreaksController {
             minutes = ('0' + minutes).slice(-2)
             seconds = ('0' + seconds).slice(-2);
 
-            if (distance <= 1) {
-                clearInterval(timer);
-                breakWindow = windowController.createBreakWindow();
-            } else {
-                const timerLabel = `${minutes}:${seconds}`;
-                callback(timerLabel);
-            }
+            callback(distance, `${minutes}:${seconds}`);
         }, 1000)
     }
 }
