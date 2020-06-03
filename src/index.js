@@ -8,10 +8,12 @@ const WindowController = require('./lib/WindowController');
 const {app, BrowserWindow, Menu, ipcMain, Tray} = electron;
 const breaksController = new BreaksController();
 const windowController = new WindowController(BrowserWindow, app);
-const menuTemplate = new MenuTemplates(windowController);
+const menuTemplate = new MenuTemplates();
 
 //global variables declaration
-let breakWindow, settingsWindow, tray, timer;
+let breakWindow, settingsWindow, tray, timer, trayMenu;
+
+
 const isMac = process.platform === 'darwin';
 const timerDuration = 40; //in minutes
 
@@ -22,10 +24,10 @@ if (process.env.NODE_ENV !== 'production') {
 
 function createTray() {
     tray = new Tray('src/assets/img/icons/tray_icons/IconTemplate.png')
-    const contextMenu = Menu.buildFromTemplate(menuTemplate.getTrayMenuTemplate())
-
+    trayMenu = Menu.buildFromTemplate(menuTemplate.getTrayMenuTemplate())
+    module.exports.trayMenu = trayMenu;
     tray.setToolTip('Ergonomic breaks reminder')
-    tray.setContextMenu(contextMenu)
+    tray.setContextMenu(trayMenu)
 }
 
 async function processMainTimer(distance, label) {
@@ -40,6 +42,16 @@ async function processMainTimer(distance, label) {
     }
 }
 
+function createTimer() {
+    timer = breaksController.createTimer(timerDuration, processMainTimer);
+    trayMenu.getMenuItemById('tray_pause_counter').enabled = true;
+}
+
+app.whenReady().then(() => {
+    createTray();
+    createTimer();
+});
+
 module.exports.getTimerInstance = () => {
     return timer
 }
@@ -48,7 +60,8 @@ module.exports.getAppInstance = () => {
     return app
 }
 
-app.whenReady().then(() => {
-    createTray();
-    timer = breaksController.createTimer(timerDuration, processMainTimer);
-});
+module.exports.getTrayInstance = () => {
+    return tray
+}
+
+module.exports.createTimer = createTimer;
