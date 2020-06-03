@@ -1,3 +1,5 @@
+const main = require('../index');
+
 module.exports = class MenuTemplate {
 
     constructor(WindowsController) {
@@ -20,9 +22,25 @@ module.exports = class MenuTemplate {
             },
             {type: 'separator'},
             {
+                id: "tray_start_timer",
+                label: "Start counter",
+                click: async () => {
+                    this.windowsController.createBreakWindow();
+                }
+            },
+            {
+                id: "tray_stop_timer",
+                label: "Stop counter",
+                click: async () => {
+                    clearInterval(main.getTimerInstance());
+                }
+            },
+            {type: 'separator'},
+            {
+                id: 'tray_quit',
                 label: 'Quit',
-                click() {
-                    app.quit();
+                click: () => {
+                    main.getAppInstance().quit()
                 }
             }
         ]

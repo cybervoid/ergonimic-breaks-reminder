@@ -10,7 +10,7 @@ const breaksController = new BreaksController();
 const windowController = new WindowController(BrowserWindow, app);
 const menuTemplate = new MenuTemplates(windowController);
 
-
+//global variables declaration
 let breakWindow, settingsWindow, tray, timer;
 const isMac = process.platform === 'darwin';
 const timerDuration = 40; //in minutes
@@ -23,12 +23,12 @@ if (process.env.NODE_ENV !== 'production') {
 function createTray() {
     tray = new Tray('src/assets/img/icons/tray_icons/IconTemplate.png')
     const contextMenu = Menu.buildFromTemplate(menuTemplate.getTrayMenuTemplate())
+
     tray.setToolTip('Ergonomic breaks reminder')
     tray.setContextMenu(contextMenu)
 }
 
-function processMainTimer(distance, label) {
-
+async function processMainTimer(distance, label) {
     if (distance <= 1) {
         clearInterval(timer);
         breakWindow = windowController.createBreakWindow();
@@ -38,6 +38,14 @@ function processMainTimer(distance, label) {
             console.log(breakWindow)
         }
     }
+}
+
+module.exports.getTimerInstance = () => {
+    return timer
+}
+
+module.exports.getAppInstance = () => {
+    return app
 }
 
 app.whenReady().then(() => {
