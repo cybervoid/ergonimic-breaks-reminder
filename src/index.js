@@ -1,10 +1,10 @@
 const electron = require('electron');
 
-const {app, BrowserWindow, Menu, ipcMain} = electron;
+const {app, BrowserWindow, Menu, ipcMain, Tray} = electron;
 
-let mainWindow, settingsWindow;
+let mainWindow, settingsWindow, tray;
 const isMac = process.platform === 'darwin';
-process.env.NODE_ENV = 'production';
+// process.env.NODE_ENV = 'production';
 
 //listen for app to be ready
 
@@ -21,14 +21,17 @@ function createMainWindow() {
     // and load the index.html of the app.
     mainWindow.loadFile('src/mainWindow.html');
     mainWindow.on('closed', app.quit);
+
     // Open the DevTools.
-    // win.webContents.openDevTools()
+    if (process.env.NODE_ENV !== 'production') {
+        mainWindow.webContents.openDevTools();
+    }
 }
 
-function createMainMenu(){
+function createMainMenu() {
 
     //if MAC, add empty object to menu
-    if(process.platform === 'darwin'){
+    if (process.platform === 'darwin') {
         // mainMenuTemplate.unshift({})
     }
 
@@ -37,25 +40,25 @@ function createMainMenu(){
         ...(isMac ? [{
             label: app.name,
             submenu: [
-                { role: 'about' },
-                { type: 'separator' },
-                { role: 'services' },
-                { type: 'separator' },
-                { role: 'hide' },
-                { role: 'hideothers' },
-                { role: 'unhide' },
-                { type: 'separator' },
-                { role: 'quit' }
+                {role: 'about'},
+                {type: 'separator'},
+                {role: 'services'},
+                {type: 'separator'},
+                {role: 'hide'},
+                {role: 'hideothers'},
+                {role: 'unhide'},
+                {type: 'separator'},
+                {role: 'quit'}
             ]
         }] : []),
         // { role: 'fileMenu' }
         {
             label: 'File',
             submenu: [
-                isMac ? { role: 'close' } : { role: 'quit' },
+                isMac ? {role: 'close'} : {role: 'quit'},
                 {
                     label: 'Settings',
-                    click(){
+                    click() {
                         createSettingsWindow()
                     }
                 }
@@ -65,28 +68,28 @@ function createMainMenu(){
         {
             label: 'Edit',
             submenu: [
-                { role: 'undo' },
-                { role: 'redo' },
-                { type: 'separator' },
-                { role: 'cut' },
-                { role: 'copy' },
-                { role: 'paste' },
+                {role: 'undo'},
+                {role: 'redo'},
+                {type: 'separator'},
+                {role: 'cut'},
+                {role: 'copy'},
+                {role: 'paste'},
                 ...(isMac ? [
-                    { role: 'pasteAndMatchStyle' },
-                    { role: 'delete' },
-                    { role: 'selectAll' },
-                    { type: 'separator' },
+                    {role: 'pasteAndMatchStyle'},
+                    {role: 'delete'},
+                    {role: 'selectAll'},
+                    {type: 'separator'},
                     {
                         label: 'Speech',
                         submenu: [
-                            { role: 'startspeaking' },
-                            { role: 'stopspeaking' }
+                            {role: 'startspeaking'},
+                            {role: 'stopspeaking'}
                         ]
                     }
                 ] : [
-                    { role: 'delete' },
-                    { type: 'separator' },
-                    { role: 'selectAll' }
+                    {role: 'delete'},
+                    {type: 'separator'},
+                    {role: 'selectAll'}
                 ])
             ]
         },
@@ -94,30 +97,30 @@ function createMainMenu(){
         {
             label: 'View',
             submenu: [
-                { role: 'reload' },
-                { role: 'forcereload' },
-                { role: 'toggledevtools' },
-                { type: 'separator' },
-                { role: 'resetzoom' },
-                { role: 'zoomin' },
-                { role: 'zoomout' },
-                { type: 'separator' },
-                { role: 'togglefullscreen' }
+                {role: 'reload'},
+                {role: 'forcereload'},
+                {role: 'toggledevtools'},
+                {type: 'separator'},
+                {role: 'resetzoom'},
+                {role: 'zoomin'},
+                {role: 'zoomout'},
+                {type: 'separator'},
+                {role: 'togglefullscreen'}
             ]
         },
         // { role: 'windowMenu' }
         {
             label: 'Window',
             submenu: [
-                { role: 'minimize' },
-                { role: 'zoom' },
+                {role: 'minimize'},
+                {role: 'zoom'},
                 ...(isMac ? [
-                    { type: 'separator' },
-                    { role: 'front' },
-                    { type: 'separator' },
-                    { role: 'window' }
+                    {type: 'separator'},
+                    {role: 'front'},
+                    {type: 'separator'},
+                    {role: 'window'}
                 ] : [
-                    { role: 'close' }
+                    {role: 'close'}
                 ])
             ]
         },
@@ -127,7 +130,7 @@ function createMainMenu(){
                 {
                     label: 'Learn More',
                     click: async () => {
-                        const { shell } = require('electron')
+                        const {shell} = require('electron')
                         await shell.openExternal('https://electronjs.org')
                     }
                 }
@@ -136,14 +139,14 @@ function createMainMenu(){
     ]
 
     //Add developer tools item if not in prod
-    if(process.env.NODE_ENV !== 'production'){
+    if (process.env.NODE_ENV !== 'production') {
         mainMenuTemplate.push({
             label: "Developer Tool",
             submenu: [
                 {
                     label: "Toggle DevTools",
                     accelerator: isMac ? 'Command+I' : 'Ctrl+I',
-                    click(item, focusedWindow){
+                    click(item, focusedWindow) {
                         focusedWindow.toggleDevTools();
                     }
                 }
@@ -155,7 +158,7 @@ function createMainMenu(){
     Menu.setApplicationMenu(mainMenu);
 }
 
-function createSettingsWindow(){
+function createSettingsWindow() {
     settingsWindow = new BrowserWindow({
         width: 300,
         height: 200,
@@ -172,15 +175,28 @@ function createSettingsWindow(){
     })
 }
 
+function createTray() {
+    tray = new Tray('src/assets/img/icons/tray_icons/IconTemplate.png')
+    const contextMenu = Menu.buildFromTemplate([
+        {
+            label: 'Open', click: async () => {
+                createMainWindow();
+                createMainMenu();
+            }
+        }
+    ])
+    tray.setToolTip('Ergonomic breaks reminder')
+    tray.setContextMenu(contextMenu)
+}
+
 //catch item:add
 ipcMain.on('item:add', (e, item) => {
     mainWindow.webContents.send('item:add', item);
     settingsWindow.close();
 })
 
-app.whenReady().then( () => {
-    createMainWindow();
-    createMainMenu();
+app.whenReady().then(() => {
+    createTray();
 });
 
 // Quit when all windows are closed.
@@ -198,4 +214,8 @@ app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
         createMainWindow()
     }
-})
+});
+
+if (process.env.NODE_ENV !== 'production') {
+    app.commandLine.appendSwitch('remote-debugging-port', '9222');
+}
