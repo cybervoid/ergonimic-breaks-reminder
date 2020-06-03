@@ -1,12 +1,15 @@
+//classes declaration
 const electron = require('electron');
 const BreaksController = require('./lib/BreaksController');
-
-const {app, BrowserWindow, Menu, ipcMain, Tray} = electron;
+const MenuTemplates = require('./lib/MenuTemplates');
 const WindowController = require('./lib/WindowController');
+
+//classes initialization
+const {app, BrowserWindow, Menu, ipcMain, Tray} = electron;
 const breaksController = new BreaksController();
-
-
 const windowController = new WindowController(BrowserWindow, app);
+const menuTemplate = new MenuTemplates(windowController);
+
 
 let breakWindow, settingsWindow, tray, timer;
 const isMac = process.platform === 'darwin';
@@ -19,27 +22,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 function createTray() {
     tray = new Tray('src/assets/img/icons/tray_icons/IconTemplate.png')
-    const contextMenu = Menu.buildFromTemplate([
-        {
-            label: 'Open', click: async () => {
-                windowController.createSettingsWindow()
-            }
-        },
-        {type: 'separator'},
-        {
-            label: "Start break",
-            click: async () => {
-                windowController.createBreakWindow();
-            }
-        },
-        {type: 'separator'},
-        {
-            label: 'Quit',
-            click() {
-                app.quit();
-            }
-        }
-    ])
+    const contextMenu = Menu.buildFromTemplate(menuTemplate.getTrayMenuTemplate())
     tray.setToolTip('Ergonomic breaks reminder')
     tray.setContextMenu(contextMenu)
 }
