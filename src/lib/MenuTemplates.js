@@ -11,7 +11,7 @@ module.exports = class MenuTemplate {
             },
             {type: 'separator'},
             {
-                label: "Start break",
+                label: "Go on break",
                 click: async () => {
                     this.windowsController.createBreakWindow();
                 }
@@ -22,8 +22,11 @@ module.exports = class MenuTemplate {
                 label: "Start counter",
                 enabled: false,
                 click: async (menuItem) => {
-                    main.createTimer();
                     menuItem.enabled = false;
+                    main.trayMenu.getMenuItemById('tray_pause_counter').enabled = true;
+                    main.trayMenu.getMenuItemById('tray_stop_counter').enabled = true;
+                    const timeLeft = main.getTimerProgress();
+                    main.createTimer(timeLeft ? timeLeft / 1000 : null);
                 }
             },
             {
@@ -33,15 +36,19 @@ module.exports = class MenuTemplate {
                     main.trayMenu.getMenuItemById('tray_start_counter').enabled = true;
                     menuItem.enabled = false;
                     clearInterval(main.getTimerInstance());
+                    main.setTimerInstance(null);
                 }
             },
             {
+                id: 'tray_stop_counter',
                 label: "Stop counter",
                 click: async (menuItem) => {
                     clearInterval(main.getTimerInstance());
                     main.getTrayInstance().setTitle('');
                     menuItem.enabled = false;
                     main.trayMenu.getMenuItemById('tray_pause_counter').enabled = false;
+                    main.trayMenu.getMenuItemById('tray_start_counter').enabled = true;
+                    main.setTimerInstance(null);
                 }
             },
             {type: 'separator'},

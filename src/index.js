@@ -11,11 +11,11 @@ const windowController = new WindowController(BrowserWindow, app);
 const menuTemplate = new MenuTemplates();
 
 //global variables declaration
-let breakWindow, settingsWindow, tray, timer, trayMenu;
+let breakWindow, settingsWindow, tray, timer, trayMenu, timerProgress;
 
 
 const isMac = process.platform === 'darwin';
-const timerDuration = 40; //in minutes
+const timerDuration = 2402; //in seconds
 
 // process.env.NODE_ENV = 'production';
 if (process.env.NODE_ENV !== 'production') {
@@ -30,11 +30,20 @@ function createTray() {
     tray.setContextMenu(trayMenu)
 }
 
+/**
+ * Callback function for the timer
+ * @param distance
+ * @param label
+ * @returns {Promise<void>}
+ */
 async function processMainTimer(distance, label) {
+
     if (distance <= 1) {
         clearInterval(timer);
         breakWindow = windowController.createBreakWindow();
+        timerProgress = null
     } else {
+        timerProgress = distance;
         tray.setTitle(label);
         if (breakWindow) {
             console.log(breakWindow)
@@ -42,11 +51,12 @@ async function processMainTimer(distance, label) {
     }
 }
 
-function createTimer() {
-    timer = breaksController.createTimer(timerDuration, processMainTimer);
+function createTimer(initialVal = null) {
+    timer = breaksController.createTimer(initialVal ?? timerDuration, processMainTimer);
     trayMenu.getMenuItemById('tray_pause_counter').enabled = true;
 }
 
+//application starts
 app.whenReady().then(() => {
     createTray();
     createTimer();
@@ -56,12 +66,23 @@ module.exports.getTimerInstance = () => {
     return timer
 }
 
+module.exports.setTimerInstance = (newValue) => {
+    timer = newValue
+    if (newValue === null) {
+        timerProgress = null
+    }
+}
+
 module.exports.getAppInstance = () => {
     return app
 }
 
 module.exports.getTrayInstance = () => {
     return tray
+}
+
+module.exports.getTimerProgress = () => {
+    return timerProgress
 }
 
 module.exports.createTimer = createTimer;
