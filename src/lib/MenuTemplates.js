@@ -36,7 +36,7 @@ module.exports = class MenuTemplate {
                     main.trayMenu.getMenuItemById('tray_start_counter').enabled = true;
                     menuItem.enabled = false;
                     clearInterval(main.getTimerInstance());
-                    main.setTimerInstance(null);
+                    main.setTimerInstance(false);
                 }
             },
             {
