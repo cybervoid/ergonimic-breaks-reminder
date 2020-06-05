@@ -1,4 +1,5 @@
 const main = require('../index');
+const windowController = require('./WindowController');
 
 module.exports = class MenuTemplate {
 
@@ -6,14 +7,14 @@ module.exports = class MenuTemplate {
         return [
             {
                 label: 'Open', click: async () => {
-                    windowController.createSettingsWindow()
+                    // windowController.createSettingsWindow()
                 }
             },
             {type: 'separator'},
             {
                 label: "Go on break",
                 click: async () => {
-                    this.windowsController.createBreakWindow();
+                    windowController.createBreakWindow();
                 }
             },
             {type: 'separator'},

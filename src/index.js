@@ -2,12 +2,11 @@
 const electron = require('electron');
 const BreaksController = require('./lib/BreaksController');
 const MenuTemplates = require('./lib/MenuTemplates');
-const WindowController = require('./lib/WindowController');
+const windowController = require('./lib/WindowController');
 
 //classes initialization
 const {app, BrowserWindow, Menu, ipcMain, Tray} = electron;
 const breaksController = new BreaksController();
-const windowController = new WindowController(BrowserWindow, app);
 const menuTemplate = new MenuTemplates();
 
 //global variables declaration

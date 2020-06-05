@@ -1,5 +1,6 @@
+
 let callback = function () {
-    console.log('test')
+    setInterval(showClock, 1000);
 };
 
 if (
