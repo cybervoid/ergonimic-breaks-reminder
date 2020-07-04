@@ -1,20 +1,20 @@
-module.exports = class BreaksController {
 
-    /**
-     *
-     * @param timerDuration in seconds
-     * @param callback
-     */
-    createTimer(timerDuration, callback) {
-        const duration = timerDuration * 1000;
-        const countDownDate = new Date(Date.now() + (duration)).getTime();
+/**
+ *
+ * @param timerDuration in seconds
+ * @param callback
+ */
+module.exports.createTimer = (timerDuration, callback) => {
 
-        return setInterval(() => {
-            // Get today's date and time
-            const now = new Date().getTime();
+    const duration = timerDuration * 1000;
+    const countDownDate = new Date(Date.now() + (duration)).getTime();
 
-            // Find the distance between now and the count down date
-            let distance = countDownDate - now;
+    return setInterval(() => {
+        // Get today's date and time
+        const now = new Date().getTime();
+
+        // Find the distance between now and the count down date
+        let distance = countDownDate - now;
 
             // Time calculations for days, hours, minutes and seconds
             // var days = Math.floor(distance / (1000 * 60 * 60 * 24));
@@ -27,5 +27,4 @@ module.exports = class BreaksController {
 
             callback(distance, `${minutes}:${seconds}`);
         }, 1000)
-    }
 }

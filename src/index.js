@@ -1,12 +1,11 @@
 //classes declaration
 const electron = require('electron');
-const BreaksController = require('./lib/BreaksController');
+const breaksController = require('./lib/BreaksController');
 const MenuTemplates = require('./lib/MenuTemplates');
 const windowController = require('./lib/WindowController');
 
 //classes initialization
 const {app, BrowserWindow, Menu, ipcMain, Tray} = electron;
-const breaksController = new BreaksController();
 const menuTemplate = new MenuTemplates();
 
 //global variables declaration
@@ -16,7 +15,6 @@ let breakWindow, settingsWindow, tray, timer, trayMenu, timerProgress;
 const isMac = process.platform === 'darwin';
 const timerDuration = 2402; //in seconds
 
-// process.env.NODE_ENV = 'production';
 if (process.env.NODE_ENV !== 'production') {
     app.commandLine.appendSwitch('remote-debugging-port', '9222');
 }
