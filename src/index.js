@@ -10,10 +10,14 @@ const menuTemplate = new MenuTemplates();
 
 //global variables declaration
 let breakWindow, settingsWindow, tray, timer, trayMenu, timerProgress;
+let isBreakTimer = false;
 
 
 const isMac = process.platform === 'darwin';
-const timerDuration = 2402; //in seconds
+const timerDuration = 10; //in seconds
+// const timerDuration = 2402; //in seconds
+// const breakTimerDuration = 10 * 60;
+const breakTimerDuration = 8;
 
 if (process.env.NODE_ENV !== 'production') {
     app.commandLine.appendSwitch('remote-debugging-port', '9222');
@@ -36,15 +40,22 @@ function createTray() {
 async function processMainTimer(distance, label) {
 
     if (distance <= 1) {
+        //time is up
         clearInterval(timer);
-        breakWindow = windowController.createBreakWindow();
         timerProgress = null
+
+        if (isBreakTimer) {
+            createTimer()
+            windowController.closeBreakWindow();
+        } else {
+            console.log('creating break window');
+            breakWindow = windowController.createBreakWindow();
+            createTimer(breakTimerDuration)
+        }
+        isBreakTimer = !isBreakTimer;
     } else {
         timerProgress = distance;
         tray.setTitle(label);
-        if (breakWindow) {
-            console.log(breakWindow)
-        }
     }
 }
 

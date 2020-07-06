@@ -1,11 +1,13 @@
 const {BrowserWindow} = require('electron')
 
+let breakWindow;
+
 module.exports.createBreakWindow = function createBreakWindow() {
     // Create the browser window.
-    let breakWindow = new BrowserWindow({
+    breakWindow = new BrowserWindow({
         alwaysOnTop: true,
         fullscreen: true,
-        modal: true,
+        // modal: true,
         webPreferences: {
             nodeIntegration: true
         }
@@ -22,5 +24,10 @@ module.exports.createBreakWindow = function createBreakWindow() {
     breakWindow.on('close', () => {
         breakWindow = null;
     })
+
     return breakWindow
+}
+
+module.exports.closeBreakWindow = () => {
+    breakWindow.close();
 }
