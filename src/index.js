@@ -10,7 +10,6 @@ const {app, Menu, ipcMain, Tray} = electron;
 const menuTemplate = new MenuTemplates();
 
 //global variables declaration
-// let breakWindow, settingsWindow, tray, timer, trayMenu, timerProgress;
 let tray, trayMenu, timerProgress;
 
 let isBreakTimer = false;
