@@ -56,9 +56,8 @@ const processMainTimer = (distance, label) => {
         timerProgress = distance;
         if (this.breakWindowHandler) {
             windowController.updateBreakTimer(label)
-        } else {
-            tray.setTitle(label);
         }
+        tray.setTitle(label);
     }
 }
 
