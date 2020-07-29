@@ -15,6 +15,7 @@ let tray, trayMenu, timerProgress;
 let isBreakTimer = false;
 module.exports.breakWindowHandler = null
 module.exports.activeTimer = null
+module.exports.timeProgress = null
 
 const isMac = process.platform === 'darwin';
 
@@ -56,12 +57,26 @@ module.exports.processMainTimer = (distance, label) => {
         }
         tray.setTitle(label);
     }
+    this.timeProgress = distance
 }
 
 module.exports.initiateBreak = () => {
     this.breakWindowHandler = windowController.createBreakWindow(this.processMainTimer)
     this.activeTimer = createTimer(BREAK_TIMER_DURATION, this.processMainTimer)
 }
+
+module.exports.controlTimer = (resume = true) => {
+    if (resume) {
+        const initVal = this.timeProgress / 1000
+        this.activeTimer = createTimer(initVal, this.processMainTimer)
+    } else {
+        if (this.breakWindowHandler) {
+            this.breakWindowHandler = windowController.closeBreakWindow();
+        }
+        clearInterval(this.activeTimer);
+    }
+}
+
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits

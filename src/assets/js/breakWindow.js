@@ -13,7 +13,6 @@ function init() {
     });
 }
 
-
 //document ready replacement
 if (
     document.readyState === "complete" ||
