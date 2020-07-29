@@ -23,11 +23,12 @@ module.exports.createBreakWindow = function createBreakWindow() {
 
     breakWindow.on('close', () => {
         breakWindow = null;
-    })
+    });
 
     return breakWindow
 }
 
 module.exports.closeBreakWindow = () => {
     breakWindow.close();
+    breakWindow = null;
 }

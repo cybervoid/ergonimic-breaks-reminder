@@ -14,8 +14,8 @@ let isBreakTimer = false;
 
 
 const isMac = process.platform === 'darwin';
-const timerDuration = 10; //in seconds
-// const timerDuration = 2402; //in seconds
+const timerDuration = 30; //in seconds
+// const timerDuration = 40 * 60; //in seconds
 // const breakTimerDuration = 10 * 60;
 const breakTimerDuration = 8;
 
@@ -47,16 +47,34 @@ async function processMainTimer(distance, label) {
         if (isBreakTimer) {
             createTimer()
             windowController.closeBreakWindow();
+            breakWindow = null
         } else {
-            console.log('creating break window');
             breakWindow = windowController.createBreakWindow();
+            breakWindow.webContents.on('did-finish-load', () => {
+                sendBreakWindowMessage('00:00')
+            });
+
             createTimer(breakTimerDuration)
         }
         isBreakTimer = !isBreakTimer;
     } else {
         timerProgress = distance;
-        tray.setTitle(label);
+        if (breakWindow) {
+            // breaksController.updateBreakTimer(label);
+            sendBreakWindowMessage(label)
+        } else {
+            tray.setTitle(label);
+        }
     }
+}
+
+function sendBreakWindowMessage(label) {
+    try {
+        breakWindow.webContents.send('ping', {'status': label})
+    } catch (e) {
+        console.log(`Error sending message to break window: ${e.message}`)
+    }
+
 }
 
 function createTimer(initialVal = null) {
@@ -101,3 +119,8 @@ module.exports.getTimerProgress = () => {
 }
 
 module.exports.createTimer = createTimer;
+
+ipcMain.handle('my-invokable-ipc', async (event, ...args) => {
+    const result = 'pepe'
+    return result
+})

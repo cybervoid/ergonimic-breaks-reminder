@@ -18,13 +18,17 @@ module.exports.createTimer = (timerDuration, callback) => {
 
             // Time calculations for days, hours, minutes and seconds
             // var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            // var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        // var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        let seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-            minutes = ('0' + minutes).slice(-2)
-            seconds = ('0' + seconds).slice(-2);
+        minutes = ('0' + minutes).slice(-2)
+        seconds = ('0' + seconds).slice(-2);
 
-            callback(distance, `${minutes}:${seconds}`);
-        }, 1000)
+        callback(distance, `${minutes}:${seconds}`);
+    }, 1000)
+}
+
+module.exports.updateBreakTimer = (label) => {
+    console.log('pepe 1 ' + label)
 }
