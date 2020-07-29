@@ -67,13 +67,14 @@ module.exports.initiateBreak = () => {
 
 module.exports.controlTimer = (resume = true) => {
     if (resume) {
-        const initVal = this.timeProgress / 1000
+        const initVal = this.timeProgress ? this.timeProgress / 1000 : TIMER_DURATION
         this.activeTimer = createTimer(initVal, this.processMainTimer)
     } else {
         if (this.breakWindowHandler) {
             this.breakWindowHandler = windowController.closeBreakWindow();
         }
         clearInterval(this.activeTimer);
+        this.timeProgress = null
     }
 }
 
