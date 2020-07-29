@@ -1,5 +1,4 @@
 const main = require('../index');
-const windowController = require('./WindowController');
 
 module.exports = class MenuTemplate {
 

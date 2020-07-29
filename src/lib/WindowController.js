@@ -1,7 +1,4 @@
 const {BrowserWindow} = require('electron')
-const BreaksController = require('./BreaksController')
-const {BREAK_TIMER_DURATION} = require('./Constants')
-const {createTimer} = require('./TimersController')
 
 let breakWindow;
 

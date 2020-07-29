@@ -1,17 +1,18 @@
 //classes declaration
 const electron = require('electron');
-const breaksController = require('./lib/BreaksController');
 const MenuTemplates = require('./lib/MenuTemplates');
 const windowController = require('./lib/WindowController');
 const {TIMER_DURATION, BREAK_TIMER_DURATION} = require('./lib/Constants')
 const {createTimer} = require('./lib/TimersController')
 
 //classes initialization
-const {app, BrowserWindow, Menu, ipcMain, Tray} = electron;
+const {app, Menu, ipcMain, Tray} = electron;
 const menuTemplate = new MenuTemplates();
 
 //global variables declaration
-let breakWindow, settingsWindow, tray, timer, trayMenu, timerProgress;
+// let breakWindow, settingsWindow, tray, timer, trayMenu, timerProgress;
+let tray, trayMenu, timerProgress;
+
 let isBreakTimer = false;
 module.exports.breakWindowHandler = null
 module.exports.activeTimer = null
@@ -36,7 +37,7 @@ function createTray() {
  * @param label
  * @returns {Promise<void>}
  */
-const processMainTimer = (distance, label) => {
+module.exports.processMainTimer = (distance, label) => {
 
     if (distance <= 1) {
         //time is up
@@ -58,8 +59,6 @@ const processMainTimer = (distance, label) => {
     }
 }
 
-module.exports.processMainTimer = processMainTimer
-
 module.exports.initiateBreak = () => {
     this.breakWindowHandler = windowController.createBreakWindow(this.processMainTimer)
     this.activeTimer = createTimer(BREAK_TIMER_DURATION, this.processMainTimer)
@@ -69,7 +68,7 @@ module.exports.initiateBreak = () => {
 //application starts
 app.whenReady().then(() => {
     createTray();
-    this.activeTimer = createTimer(TIMER_DURATION, processMainTimer);
+    this.activeTimer = createTimer(TIMER_DURATION, this.processMainTimer);
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common
