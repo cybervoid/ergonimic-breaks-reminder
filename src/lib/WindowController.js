@@ -1,8 +1,11 @@
 const {BrowserWindow} = require('electron')
+const BreaksController = require('./BreaksController')
+const {BREAK_TIMER_DURATION} = require('./Constants')
+const {createTimer} = require('./TimersController')
 
 let breakWindow;
 
-module.exports.createBreakWindow = function createBreakWindow() {
+module.exports.createBreakWindow = function createBreakWindow(callback) {
     // Create the browser window.
     breakWindow = new BrowserWindow({
         alwaysOnTop: true,
@@ -25,10 +28,22 @@ module.exports.createBreakWindow = function createBreakWindow() {
         breakWindow = null;
     });
 
+    breakWindow.webContents.on('did-finish-load', this.updateBreakTimer);
+    createTimer(BREAK_TIMER_DURATION, callback)
     return breakWindow
 }
 
 module.exports.closeBreakWindow = () => {
     breakWindow.close();
     breakWindow = null;
+}
+
+module.exports.updateBreakTimer = (label = false) => {
+    if (label) {
+        try {
+            breakWindow.webContents.send('ping', {'status': label})
+        } catch (e) {
+            console.log(`Error sending message to break window: ${e.message}`)
+        }
+    }
 }

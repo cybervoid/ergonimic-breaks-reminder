@@ -14,7 +14,7 @@ module.exports = class MenuTemplate {
             {
                 label: "Go on break",
                 click: async () => {
-                    windowController.createBreakWindow();
+                    main.breakWindowHandler = windowController.createBreakWindow(main.processMainTimer);
                 }
             },
             {type: 'separator'},

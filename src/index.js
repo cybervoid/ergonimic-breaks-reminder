@@ -3,6 +3,8 @@ const electron = require('electron');
 const breaksController = require('./lib/BreaksController');
 const MenuTemplates = require('./lib/MenuTemplates');
 const windowController = require('./lib/WindowController');
+const {TIMER_DURATION, BREAK_TIMER_DURATION} = require('./lib/Constants')
+const {createTimer} = require('./lib/TimersController')
 
 //classes initialization
 const {app, BrowserWindow, Menu, ipcMain, Tray} = electron;
@@ -11,13 +13,10 @@ const menuTemplate = new MenuTemplates();
 //global variables declaration
 let breakWindow, settingsWindow, tray, timer, trayMenu, timerProgress;
 let isBreakTimer = false;
-
+module.exports.breakWindowHandler = null
+module.exports.activeTimer = null
 
 const isMac = process.platform === 'darwin';
-const timerDuration = 30; //in seconds
-// const timerDuration = 40 * 60; //in seconds
-// const breakTimerDuration = 10 * 60;
-const breakTimerDuration = 8;
 
 if (process.env.NODE_ENV !== 'production') {
     app.commandLine.appendSwitch('remote-debugging-port', '9222');
@@ -37,55 +36,43 @@ function createTray() {
  * @param label
  * @returns {Promise<void>}
  */
-async function processMainTimer(distance, label) {
+const processMainTimer = (distance, label) => {
 
     if (distance <= 1) {
         //time is up
-        clearInterval(timer);
+        clearInterval(this.activeTimer);
         timerProgress = null
 
         if (isBreakTimer) {
-            createTimer()
+            createTimer(TIMER_DURATION, processMainTimer)
             windowController.closeBreakWindow();
             breakWindow = null
         } else {
-            breakWindow = windowController.createBreakWindow();
-            breakWindow.webContents.on('did-finish-load', () => {
-                sendBreakWindowMessage('00:00')
-            });
-
-            createTimer(breakTimerDuration)
+            breakWindow = windowController.createBreakWindow(processMainTimer);
+            // createTimer(BREAK_TIMER_DURATION, processMainTimer)
         }
         isBreakTimer = !isBreakTimer;
     } else {
         timerProgress = distance;
-        if (breakWindow) {
-            // breaksController.updateBreakTimer(label);
-            sendBreakWindowMessage(label)
+        if (this.breakWindowHandler) {
+            windowController.updateBreakTimer(label)
         } else {
             tray.setTitle(label);
         }
     }
 }
 
-function sendBreakWindowMessage(label) {
-    try {
-        breakWindow.webContents.send('ping', {'status': label})
-    } catch (e) {
-        console.log(`Error sending message to break window: ${e.message}`)
-    }
+module.exports.processMainTimer = processMainTimer
 
-}
-
-function createTimer(initialVal = null) {
-    timer = breaksController.createTimer(initialVal ?? timerDuration, processMainTimer);
-    trayMenu.getMenuItemById('tray_pause_counter').enabled = true;
-}
+// function createTimer(initialVal = null) {
+//     timer = breaksController.createTimer(initialVal ?? TimerDuration, processMainTimer);
+//     trayMenu.getMenuItemById('tray_pause_counter').enabled = true;
+// }
 
 //application starts
 app.whenReady().then(() => {
     createTray();
-    createTimer();
+    this.activeTimer = createTimer(TIMER_DURATION, processMainTimer);
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common
@@ -117,8 +104,6 @@ module.exports.getTrayInstance = () => {
 module.exports.getTimerProgress = () => {
     return timerProgress
 }
-
-module.exports.createTimer = createTimer;
 
 ipcMain.handle('my-invokable-ipc', async (event, ...args) => {
     const result = 'pepe'
