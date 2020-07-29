@@ -20,7 +20,7 @@ module.exports = class MenuTemplate {
             {type: 'separator'},
             {
                 id: 'tray_start_counter',
-                label: "Start counter",
+                label: "Start countdown",
                 enabled: false,
                 click: async (menuItem) => {
                     menuItem.enabled = false;
@@ -31,7 +31,7 @@ module.exports = class MenuTemplate {
             },
             {
                 id: 'tray_pause_counter',
-                label: "Pause counter",
+                label: "Pause countdown",
                 click: async (menuItem) => {
                     main.trayMenu.getMenuItemById('tray_start_counter').enabled = true;
                     menuItem.enabled = false;
@@ -41,7 +41,7 @@ module.exports = class MenuTemplate {
             },
             {
                 id: 'tray_stop_counter',
-                label: "Stop counter",
+                label: "Stop countdown",
                 click: async (menuItem) => {
                     main.getTrayInstance().setTitle('');
                     menuItem.enabled = false;
