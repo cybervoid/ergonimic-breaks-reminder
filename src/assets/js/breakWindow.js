@@ -7,7 +7,8 @@ async function myFunction() {
 
 function init() {
     console.log(`running init`)
-    ipcRenderer.on('ping', (event, message) => {
+    ipcRenderer.on('break_timer', (event, message) => {
+        document.getElementById("breakTimerCanvas").innerHTML = message.status
         console.log('timer: ' + message.status)
     });
 }

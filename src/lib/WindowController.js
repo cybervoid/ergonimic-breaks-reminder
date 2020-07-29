@@ -14,7 +14,7 @@ module.exports.createBreakWindow = function createBreakWindow(callback) {
     })
 
     // and load the index.html of the app.
-    breakWindow.loadFile('src/views/break.html');
+    breakWindow.loadFile('src/views/breakWindow.html');
 
     // Open the DevTools.
     if (process.env.NODE_ENV !== 'production') {
@@ -39,7 +39,7 @@ module.exports.closeBreakWindow = () => {
 module.exports.updateBreakTimer = (label = false) => {
     if (label) {
         try {
-            breakWindow.webContents.send('ping', {'status': label})
+            breakWindow.webContents.send('break_timer', {'status': label})
         } catch (e) {
             console.log(`Error sending message to break window: ${e.message}`)
         }
