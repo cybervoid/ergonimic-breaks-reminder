@@ -1,56 +1,47 @@
-module.exports = class WindowsController {
+const {BrowserWindow} = require('electron')
 
-    constructor(browserWindow, app) {
-        this.app = app;
-        this.BrowserWindow = browserWindow;
+let breakWindow;
+
+module.exports.createBreakWindow = function createBreakWindow(callback) {
+    // Create the browser window.
+    breakWindow = new BrowserWindow({
+        alwaysOnTop: true,
+        fullscreen: true,
+        // modal: true,
+        webPreferences: {
+            nodeIntegration: true
+        }
+    })
+
+    // and load the index.html of the app.
+    breakWindow.loadFile('src/views/breakWindow.html');
+
+    // Open the DevTools.
+    if (process.env.NODE_ENV !== 'production') {
+        breakWindow.webContents.openDevTools();
     }
 
-    createBreakWindow() {
-        // Create the browser window.
-        let breakWindow = new this.BrowserWindow({
-            alwaysOnTop: true,
-            fullscreen: true,
-            modal: true,
-            webPreferences: {
-                nodeIntegration: true
-            }
-        })
+    breakWindow.on('close', () => {
+        breakWindow = null;
+    });
 
-        // and load the index.html of the app.
-        breakWindow.loadFile('src/views/break.html');
+    breakWindow.webContents.on('did-finish-load', this.updateBreakTimer);
 
-        // Open the DevTools.
-        if (process.env.NODE_ENV !== 'production') {
-            breakWindow.webContents.openDevTools();
+    return breakWindow
+}
+
+module.exports.closeBreakWindow = () => {
+    breakWindow.close();
+    breakWindow = null;
+    return breakWindow
+}
+
+module.exports.updateBreakTimer = (label = false) => {
+    if (label) {
+        try {
+            breakWindow.webContents.send('break_timer', {'status': label})
+        } catch (e) {
+            console.log(`Error sending message to break window: ${e.message}`)
         }
-
-        breakWindow.on('close', () => {
-            breakWindow = null;
-        })
-        return breakWindow
-    }
-
-    createSettingsWindow() {
-        // Create the browser window.
-        let settingsWindow = new this.BrowserWindow({
-            width: 800,
-            height: 600,
-            webPreferences: {
-                nodeIntegration: true
-            }
-        })
-
-        // and load the index.html of the app.
-        settingsWindow.loadFile('src/views/settings.html');
-
-        // Open the DevTools.
-        if (process.env.NODE_ENV !== 'production') {
-            settingsWindow.webContents.openDevTools();
-        }
-
-        settingsWindow.on('close', () => {
-            settingsWindow = null;
-        })
-        return settingsWindow
     }
 }

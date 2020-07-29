@@ -1,4 +1,5 @@
 const main = require('../index');
+const {app} = require('electron');
 
 module.exports = class MenuTemplate {
 
@@ -6,14 +7,14 @@ module.exports = class MenuTemplate {
         return [
             {
                 label: 'Open', click: async () => {
-                    windowController.createSettingsWindow()
+                    // windowController.createSettingsWindow()
                 }
             },
             {type: 'separator'},
             {
                 label: "Go on break",
                 click: async () => {
-                    this.windowsController.createBreakWindow();
+                    main.initiateBreak()
                 }
             },
             {type: 'separator'},
@@ -25,8 +26,7 @@ module.exports = class MenuTemplate {
                     menuItem.enabled = false;
                     main.trayMenu.getMenuItemById('tray_pause_counter').enabled = true;
                     main.trayMenu.getMenuItemById('tray_stop_counter').enabled = true;
-                    const timeLeft = main.getTimerProgress();
-                    main.createTimer(timeLeft ? timeLeft / 1000 : null);
+                    main.controlTimer()
                 }
             },
             {
@@ -35,27 +35,26 @@ module.exports = class MenuTemplate {
                 click: async (menuItem) => {
                     main.trayMenu.getMenuItemById('tray_start_counter').enabled = true;
                     menuItem.enabled = false;
-                    clearInterval(main.getTimerInstance());
-                    main.setTimerInstance(false);
+                    const {activeTimer} = require('../index')
+                    clearInterval(activeTimer)
                 }
             },
             {
                 id: 'tray_stop_counter',
                 label: "Stop counter",
                 click: async (menuItem) => {
-                    clearInterval(main.getTimerInstance());
                     main.getTrayInstance().setTitle('');
                     menuItem.enabled = false;
                     main.trayMenu.getMenuItemById('tray_pause_counter').enabled = false;
                     main.trayMenu.getMenuItemById('tray_start_counter').enabled = true;
-                    main.setTimerInstance(null);
+                    main.controlTimer(false)
                 }
             },
             {type: 'separator'},
             {
                 label: 'Quit',
                 click: () => {
-                    main.getAppInstance().quit()
+                    app.quit()
                 }
             }
         ]

@@ -1,0 +1,6 @@
+module.exports = {
+    TIMER_DURATION: 40 * 60,
+    // TIMER_DURATION: 30,
+    // BREAK_TIMER_DURATION: 8,
+    BREAK_TIMER_DURATION: 10 * 60
+}
