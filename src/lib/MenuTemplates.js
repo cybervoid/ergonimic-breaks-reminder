@@ -14,7 +14,7 @@ module.exports = class MenuTemplate {
             {
                 label: "Go on break",
                 click: async () => {
-                    main.breakWindowHandler = windowController.createBreakWindow(main.processMainTimer);
+                    main.initiateBreak()
                 }
             },
             {type: 'separator'},
@@ -27,7 +27,7 @@ module.exports = class MenuTemplate {
                     main.trayMenu.getMenuItemById('tray_pause_counter').enabled = true;
                     main.trayMenu.getMenuItemById('tray_stop_counter').enabled = true;
                     const timeLeft = main.getTimerProgress();
-                    main.createTimer(timeLeft ? timeLeft / 1000 : null);
+                    main.initiateBreak(timeLeft ? timeLeft / 1000 : null);
                 }
             },
             {

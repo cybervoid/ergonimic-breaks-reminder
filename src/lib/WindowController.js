@@ -29,13 +29,14 @@ module.exports.createBreakWindow = function createBreakWindow(callback) {
     });
 
     breakWindow.webContents.on('did-finish-load', this.updateBreakTimer);
-    createTimer(BREAK_TIMER_DURATION, callback)
+
     return breakWindow
 }
 
 module.exports.closeBreakWindow = () => {
     breakWindow.close();
     breakWindow = null;
+    return breakWindow
 }
 
 module.exports.updateBreakTimer = (label = false) => {

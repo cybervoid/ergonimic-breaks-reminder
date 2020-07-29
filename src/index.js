@@ -40,16 +40,13 @@ const processMainTimer = (distance, label) => {
 
     if (distance <= 1) {
         //time is up
-        clearInterval(this.activeTimer);
         timerProgress = null
 
-        if (isBreakTimer) {
-            createTimer(TIMER_DURATION, processMainTimer)
-            windowController.closeBreakWindow();
-            breakWindow = null
+        if (this.breakWindowHandler) {
+            this.activeTimer = createTimer(TIMER_DURATION, this.processMainTimer)
+            this.breakWindowHandler = windowController.closeBreakWindow();
         } else {
-            breakWindow = windowController.createBreakWindow(processMainTimer);
-            // createTimer(BREAK_TIMER_DURATION, processMainTimer)
+            this.initiateBreak()
         }
         isBreakTimer = !isBreakTimer;
     } else {
@@ -63,10 +60,11 @@ const processMainTimer = (distance, label) => {
 
 module.exports.processMainTimer = processMainTimer
 
-// function createTimer(initialVal = null) {
-//     timer = breaksController.createTimer(initialVal ?? TimerDuration, processMainTimer);
-//     trayMenu.getMenuItemById('tray_pause_counter').enabled = true;
-// }
+module.exports.initiateBreak = () => {
+    this.breakWindowHandler = windowController.createBreakWindow(this.processMainTimer)
+    this.activeTimer = createTimer(BREAK_TIMER_DURATION, this.processMainTimer)
+}
+
 
 //application starts
 app.whenReady().then(() => {
