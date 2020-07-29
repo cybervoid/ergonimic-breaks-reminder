@@ -79,27 +79,8 @@ app.on('window-all-closed', function () {
     if (process.platform !== 'darwin') app.quit()
 })
 
-module.exports.getTimerInstance = () => {
-    return timer
-}
-
-module.exports.setTimerInstance = (newValue) => {
-    timer = newValue
-    if (newValue === null) {
-        timerProgress = null
-    }
-}
-
-module.exports.getAppInstance = () => {
-    return app
-}
-
 module.exports.getTrayInstance = () => {
     return tray
-}
-
-module.exports.getTimerProgress = () => {
-    return timerProgress
 }
 
 ipcMain.handle('my-invokable-ipc', async (event, ...args) => {
