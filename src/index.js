@@ -1,34 +1,24 @@
 //classes declaration
-const electron = require('electron');
-const MenuTemplates = require('./lib/MenuTemplates');
+const {app, ipcMain} = require('electron');
+const {createMenuTray} = require('./lib/MenuController');
 const windowController = require('./lib/WindowController');
 const {TIMER_DURATION, BREAK_TIMER_DURATION} = require('./lib/Constants')
 const {createTimer} = require('./lib/TimersController')
 
-//classes initialization
-const {app, Menu, ipcMain, Tray} = electron;
-const menuTemplate = new MenuTemplates();
 
 //global variables declaration
-let tray, trayMenu, timerProgress;
+let timerProgress;
 
 let isBreakTimer = false;
 module.exports.breakWindowHandler = null
 module.exports.activeTimer = null
 module.exports.timeProgress = null
+module.exports.menuTray = null
 
 const isMac = process.platform === 'darwin';
 
 if (process.env.NODE_ENV !== 'production') {
     app.commandLine.appendSwitch('remote-debugging-port', '9222');
-}
-
-function createTray() {
-    tray = new Tray('src/assets/img/icons/tray_icons/IconTemplate.png')
-    trayMenu = Menu.buildFromTemplate(menuTemplate.getTrayMenuTemplate())
-    module.exports.trayMenu = trayMenu;
-    tray.setToolTip('Ergonomic breaks reminder')
-    tray.setContextMenu(trayMenu)
 }
 
 /**
@@ -55,7 +45,7 @@ module.exports.processMainTimer = (distance, label) => {
         if (this.breakWindowHandler) {
             windowController.updateBreakTimer(label)
         }
-        tray.setTitle(label);
+        this.menuTray.setTitle(label);
     }
     this.timeProgress = distance
 }
@@ -86,9 +76,6 @@ app.on('window-all-closed', function () {
     if (process.platform !== 'darwin') app.quit()
 })
 
-module.exports.getTrayInstance = () => {
-    return tray
-}
 
 ipcMain.handle('my-invokable-ipc', async (event, ...args) => {
     const result = 'pepe'
@@ -97,6 +84,6 @@ ipcMain.handle('my-invokable-ipc', async (event, ...args) => {
 
 //application starts
 app.whenReady().then(() => {
-    createTray();
+    this.menuTray = createMenuTray()
     this.activeTimer = createTimer(TIMER_DURATION, this.processMainTimer);
 });
