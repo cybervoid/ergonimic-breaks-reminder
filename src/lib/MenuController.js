@@ -69,3 +69,9 @@ function getMenuTemplate(tray) {
         }
     ]
 }
+
+module.exports.resetTimerMenu = () => {
+    trayMenu.getMenuItemById('tray_pause_counter').enabled = true;
+    trayMenu.getMenuItemById('tray_stop_counter').enabled = true;
+    trayMenu.getMenuItemById('tray_start_counter').enabled = false;
+}

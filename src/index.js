@@ -1,6 +1,6 @@
 //classes declaration
 const {app, ipcMain} = require('electron');
-const {createMenuTray} = require('./lib/MenuController');
+const {createMenuTray, resetTimerMenu} = require('./lib/MenuController');
 const windowController = require('./lib/WindowController');
 const {TIMER_DURATION, BREAK_TIMER_DURATION} = require('./lib/Constants')
 const {createTimer} = require('./lib/TimersController')
@@ -109,7 +109,7 @@ ipcMain.handle('system', async (event, ...args) => {
 async function resetTimer(duration = false) {
     await controlTimer(false)
     module.exports.activeTimer = createTimer(duration ?? TIMER_DURATION, processMainTimer);
-
+    resetTimerMenu()
 }
 
 //application starts
