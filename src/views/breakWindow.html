@@ -6,15 +6,17 @@
 	<title>Break</title>
 	<meta content="script-src 'self' 'unsafe-inline';" http-equiv="Content-Security-Policy"/>
 	<link href="../assets/css/breakWindow.css" rel="stylesheet">
+	<link href="../assets/css/clock.css" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet"/>
-	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+
 </head>
 <body>
 <h1>You are on a break!</h1>
 <div id="breakTimerCanvas"></div>
 <div id="app"></div>
-<button onclick="myFunction()">Test</button>
+<button onclick="skipBreak()">Skip break</button>
+<h1>Current time:</h1>
+<div id="clock"></div>
 </body>
 <script src="../assets/js/breakWindow.js" type="application/javascript"></script>
-<script src="../assets/js/breakWindow.entry.js" type="application/javascript"></script>
 </html>

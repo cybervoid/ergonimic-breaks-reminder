@@ -1,16 +1,18 @@
 const {ipcRenderer} = require('electron')
+const {startClock} = require('../assets/js/clock')
 
-async function myFunction() {
-    const result = await ipcRenderer.invoke('my-invokable-ipc', 'arg1', 'arg2')
+async function skipBreak() {
+    const result = await ipcRenderer.invoke('system', 'timer', 'skip')
+    debugger
     console.log(result);
 }
 
 function init() {
-    console.log(`running init`)
+    startClock()
     ipcRenderer.on('break_timer', (event, message) => {
         document.getElementById("breakTimerCanvas").innerHTML = message.status
-        console.log('timer: ' + message.status)
     });
+
 }
 
 //document ready replacement

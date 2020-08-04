@@ -77,9 +77,17 @@ app.on('window-all-closed', function () {
 })
 
 
-ipcMain.handle('my-invokable-ipc', async (event, ...args) => {
-    const result = 'pepe'
-    return result
+ipcMain.handle('system', async (event, ...args) => {
+    let res = false
+    switch (args[0]) {
+        case "timer":
+            await this.controlTimer(false)
+            this.activeTimer = createTimer(TIMER_DURATION, this.processMainTimer);
+
+            break
+    }
+
+    return res
 })
 
 //application starts
