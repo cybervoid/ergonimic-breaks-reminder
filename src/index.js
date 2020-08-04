@@ -1,34 +1,24 @@
 //classes declaration
-const electron = require('electron');
-const MenuTemplates = require('./lib/MenuTemplates');
+const {app, ipcMain} = require('electron');
+const {createMenuTray, resetTimerMenu} = require('./lib/MenuController');
 const windowController = require('./lib/WindowController');
 const {TIMER_DURATION, BREAK_TIMER_DURATION} = require('./lib/Constants')
 const {createTimer} = require('./lib/TimersController')
 
-//classes initialization
-const {app, Menu, ipcMain, Tray} = electron;
-const menuTemplate = new MenuTemplates();
 
 //global variables declaration
-let tray, trayMenu, timerProgress;
+let timerProgress;
 
 let isBreakTimer = false;
 module.exports.breakWindowHandler = null
 module.exports.activeTimer = null
 module.exports.timeProgress = null
+module.exports.menuTray = null
 
 const isMac = process.platform === 'darwin';
 
 if (process.env.NODE_ENV !== 'production') {
     app.commandLine.appendSwitch('remote-debugging-port', '9222');
-}
-
-function createTray() {
-    tray = new Tray('src/assets/img/icons/tray_icons/IconTemplate.png')
-    trayMenu = Menu.buildFromTemplate(menuTemplate.getTrayMenuTemplate())
-    module.exports.trayMenu = trayMenu;
-    tray.setToolTip('Ergonomic breaks reminder')
-    tray.setContextMenu(trayMenu)
 }
 
 /**
@@ -37,7 +27,7 @@ function createTray() {
  * @param label
  * @returns {Promise<void>}
  */
-module.exports.processMainTimer = (distance, label) => {
+const processMainTimer = (distance, label) => {
 
     if (distance <= 1) {
         //time is up
@@ -55,7 +45,7 @@ module.exports.processMainTimer = (distance, label) => {
         if (this.breakWindowHandler) {
             windowController.updateBreakTimer(label)
         }
-        tray.setTitle(label);
+        this.menuTray.setTitle(label);
     }
     this.timeProgress = distance
 }
@@ -65,18 +55,25 @@ module.exports.initiateBreak = () => {
     this.activeTimer = createTimer(BREAK_TIMER_DURATION, this.processMainTimer)
 }
 
-module.exports.controlTimer = (resume = true) => {
+/**
+ * Stops or resume a timer based on the boolean param
+ * @param resume
+ */
+const controlTimer = (resume = true) => {
     if (resume) {
-        const initVal = this.timeProgress / 1000
+        const initVal = this.timeProgress ? this.timeProgress / 1000 : TIMER_DURATION
         this.activeTimer = createTimer(initVal, this.processMainTimer)
     } else {
         if (this.breakWindowHandler) {
             this.breakWindowHandler = windowController.closeBreakWindow();
         }
         clearInterval(this.activeTimer);
+        this.timeProgress = null
     }
 }
 
+module.exports.controlTimer = controlTimer;
+module.exports.processMainTimer = processMainTimer;
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
@@ -85,17 +82,38 @@ app.on('window-all-closed', function () {
     if (process.platform !== 'darwin') app.quit()
 })
 
-module.exports.getTrayInstance = () => {
-    return tray
-}
+ipcMain.handle('system', async (event, ...args) => {
+    let res = false
+    switch (args[0]) {
+        case "timer":
+            switch (args[1]) {
+                case "skip":
+                    await resetTimer()
+                    break
+                case "postpone":
+                    const duration = args[2] * 60
+                    await resetTimer(duration)
 
-ipcMain.handle('my-invokable-ipc', async (event, ...args) => {
-    const result = 'pepe'
-    return result
+                    break
+            }
+            break
+    }
+
+    return res
 })
+
+/**
+ * Stops break timer and starts regular timer
+ * @returns {Promise<void>}
+ */
+async function resetTimer(duration = false) {
+    await controlTimer(false)
+    module.exports.activeTimer = createTimer(duration ?? TIMER_DURATION, processMainTimer);
+    resetTimerMenu()
+}
 
 //application starts
 app.whenReady().then(() => {
-    createTray();
-    this.activeTimer = createTimer(TIMER_DURATION, this.processMainTimer);
+    this.menuTray = createMenuTray()
+    module.exports.activeTimer = createTimer(TIMER_DURATION, this.processMainTimer);
 });
