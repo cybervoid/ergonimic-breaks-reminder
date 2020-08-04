@@ -27,7 +27,7 @@ if (process.env.NODE_ENV !== 'production') {
  * @param label
  * @returns {Promise<void>}
  */
-module.exports.processMainTimer = (distance, label) => {
+const processMainTimer = (distance, label) => {
 
     if (distance <= 1) {
         //time is up
@@ -55,7 +55,11 @@ module.exports.initiateBreak = () => {
     this.activeTimer = createTimer(BREAK_TIMER_DURATION, this.processMainTimer)
 }
 
-module.exports.controlTimer = (resume = true) => {
+/**
+ * Stops or resume a timer based on the boolean param
+ * @param resume
+ */
+const controlTimer = (resume = true) => {
     if (resume) {
         const initVal = this.timeProgress ? this.timeProgress / 1000 : TIMER_DURATION
         this.activeTimer = createTimer(initVal, this.processMainTimer)
@@ -68,6 +72,8 @@ module.exports.controlTimer = (resume = true) => {
     }
 }
 
+module.exports.controlTimer = controlTimer;
+module.exports.processMainTimer = processMainTimer;
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
@@ -76,22 +82,38 @@ app.on('window-all-closed', function () {
     if (process.platform !== 'darwin') app.quit()
 })
 
-
 ipcMain.handle('system', async (event, ...args) => {
     let res = false
     switch (args[0]) {
         case "timer":
-            await this.controlTimer(false)
-            this.activeTimer = createTimer(TIMER_DURATION, this.processMainTimer);
+            switch (args[1]) {
+                case "skip":
+                    await resetTimer()
+                    break
+                case "postpone":
+                    const duration = args[2] * 60
+                    await resetTimer(duration)
 
+                    break
+            }
             break
     }
 
     return res
 })
 
+/**
+ * Stops break timer and starts regular timer
+ * @returns {Promise<void>}
+ */
+async function resetTimer(duration = false) {
+    await controlTimer(false)
+    module.exports.activeTimer = createTimer(duration ?? TIMER_DURATION, processMainTimer);
+
+}
+
 //application starts
 app.whenReady().then(() => {
     this.menuTray = createMenuTray()
-    this.activeTimer = createTimer(TIMER_DURATION, this.processMainTimer);
+    module.exports.activeTimer = createTimer(TIMER_DURATION, this.processMainTimer);
 });

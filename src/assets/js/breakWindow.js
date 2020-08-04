@@ -2,8 +2,11 @@ const {ipcRenderer} = require('electron')
 const {startClock} = require('../assets/js/clock')
 
 async function skipBreak() {
-    const result = await ipcRenderer.invoke('system', 'timer', 'skip')
-    debugger
+    await ipcRenderer.invoke('system', 'timer', 'skip')
+}
+
+async function postpone(duration) {
+    const result = await ipcRenderer.invoke('system', 'timer', 'postpone', duration)
     console.log(result);
 }
 
